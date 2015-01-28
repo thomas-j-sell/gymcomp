@@ -1,0 +1,17 @@
+{
+  "uuid": "cf37938c-c658-4254-b058-f67b7556cb75",
+  "shortName": "gymcomp",
+  "longName": "gymcomp",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}

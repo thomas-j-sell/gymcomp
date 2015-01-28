@@ -1,0 +1,8 @@
+argv = ['/usr/local/Cellar/pebble-sdk/2.8.1/Pebble/waf', 'configure', 'build']
+environ = {'_': '/usr/local/Cellar/pebble-sdk/2.8.1/Pebble/waf', 'TERM_SESSION_ID': 'E680FFF3-E9A0-497D-BE43-B7329BF331FB', 'XPC_SERVICE_NAME': '0', 'PYTHONPATH': '/usr/local/Cellar/pebble-sdk/2.8.1/libexec/lib/python2.7/site-packages:/usr/local/Cellar/pebble-sdk/2.8.1/lib/python2.7/site-packages', 'VERSIONER_PYTHON_PREFER_32_BIT': 'no', 'TERM_PROGRAM_VERSION': '343', 'SSH_AUTH_SOCK': '/private/tmp/com.apple.launchd.nzwMPjo27Y/Listeners', 'SHELL': '/bin/bash', 'LOGNAME': 'teaja', 'USER': 'teaja', 'HOME': '/Users/teaja', 'PATH': '/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/Cellar/pebble-sdk/2.8.1/arm-cs-tools/bin', 'TMPDIR': '/var/folders/gj/nyzm4_ks4b10hy0s3vr9wlr80000gn/T/', 'TERM_PROGRAM': 'Apple_Terminal', 'LANG': 'en_US.UTF-8', 'TERM': 'xterm-256color', 'Apple_PubSub_Socket_Render': '/private/tmp/com.apple.launchd.pIMaW2Kntb/Render', 'VERSIONER_PYTHON_VERSION': '2.7', 'SHLVL': '2', 'SECURITYSESSIONID': '186a6', 'XPC_FLAGS': '0x0', 'CLICOLOR': '1', '__CF_USER_TEXT_ENCODING': '0x1F5:0x0:0x0', 'PWD': '/Users/teaja/Development/pebble/gymcomp', 'EDITOR': 'subl -w', 'LSCOLORS': 'gxFxCxDxCxegedabagacad'}
+files = ['/Users/teaja/Development/pebble/gymcomp/wscript']
+hash = 7538170971265686294
+options = {'files': '', 'jobs': 8, 'verbose': 0, 'nocache': False, 'progress_bar': 0, 'timestamp': None, 'distcheck_args': None, 'top': '', 'destdir': '', 'keep': 0, 'zones': '', 'debug': False, 'prefix': '/usr/local/', 'download': False, 'force': False, 'targets': '', 'out': ''}
+out_dir = '/Users/teaja/Development/pebble/gymcomp/build'
+run_dir = '/Users/teaja/Development/pebble/gymcomp'
+top_dir = '/Users/teaja/Development/pebble/gymcomp'
