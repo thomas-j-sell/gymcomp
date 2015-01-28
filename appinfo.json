@@ -1,10 +1,10 @@
 {
   "uuid": "cf37938c-c658-4254-b058-f67b7556cb75",
-  "shortName": "gymcomp",
-  "longName": "gymcomp",
-  "companyName": "MakeAwesomeHappen",
+  "shortName": "Gymcomp",
+  "longName": "Gymcomp",
+  "companyName": "CodeByTom",
   "versionCode": 1,
-  "versionLabel": "1.0",
+  "versionLabel": "0.1",
   "watchapp": {
     "watchface": false
   },
