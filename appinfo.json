@@ -1,17 +1,21 @@
 {
-  "uuid": "cf37938c-c658-4254-b058-f67b7556cb75",
-  "shortName": "Gymcomp",
-  "longName": "Gymcomp",
-  "companyName": "CodeByTom",
-  "versionCode": 1,
-  "versionLabel": "0.1",
-  "watchapp": {
-    "watchface": false
-  },
-  "appKeys": {
-    "dummy": 0
-  },
-  "resources": {
-    "media": []
-  }
+    "appKeys": {
+        "dummy": 0
+    },
+    "capabilities": [
+        ""
+    ],
+    "companyName": "CodeByTom",
+    "longName": "Gymcomp",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "shortName": "Gymcomp",
+    "uuid": "cf37938c-c658-4254-b058-f67b7556cb75",
+    "versionCode": 1,
+    "versionLabel": "0.1",
+    "watchapp": {
+        "watchface": false
+    }
 }

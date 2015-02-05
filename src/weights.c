@@ -1,7 +1,7 @@
-
+// @TODO add persistent storage and necessary functions
 struct Weights
 {
-  char name[10];
+  char* name;
   int bench;
   int back;
   int biceps;
