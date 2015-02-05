@@ -6,30 +6,69 @@
 #define EDIT 1
 
 static Window *window;
-static TextLayer *text_layer;
+static TextLayer *exercise_layer;
+static TextLayer *weight_layer;
 int mode;
-int current_exersize;
+int current_exercise;
 struct Weights weights;
 
 
-void next_exersize() {
-  if(current_exersize == 9 )
-    current_exersize = 0;
+void next_exercise() {
+  if(current_exercise == 9 )
+    current_exercise = 0;
   else
-    current_exersize = current_exersize + 1;
+    current_exercise = current_exercise + 1;
 }
 
-void previous_exersize() {
-  if(current_exersize == 0 )
-    current_exersize = 9;
+void previous_exercise() {
+  if(current_exercise == 0 )
+    current_exercise = 9;
   else
-    current_exersize = current_exersize - 1;
+    current_exercise = current_exercise - 1;
+}
+
+char* exercise_string() {
+  static char* str;
+  
+  switch(current_exercise) {
+    case 0 :
+      str = "BENCH";
+      break;
+    case 1 :
+      str = "BACK";
+      break;
+    case 2 :
+      str = "BICEPS";
+      break;
+    case 3 :
+      str = "TRICEPS";
+      break;
+    case 4 :
+      str = "SHOULDER";
+      break;
+    case 5 :
+      str = "ABS";
+      break;
+    case 6 :
+      str = "QUADS";
+      break;
+    case 7 :
+      str = "HAMMIES";
+      break;
+    case 8 :
+      str = "CALVES";
+      break;
+    case 9 :
+      str = "LEG PRESS";
+      break;
+  }
+  return str;
 }
 
 char* weight_string() {
   static char str[65];
   
-  switch(current_exersize) {
+  switch(current_exercise) {
     case 0 :
       snprintf(str, 10, "%d", weights.bench);
       break;
@@ -68,23 +107,29 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
   if(mode){
     mode = VIEW;
-    text_layer_set_text(text_layer, "VIEW");
+//     text_layer_set_text(text_layer, "VIEW");
   }else{
     mode = EDIT;
-    text_layer_set_text(text_layer, "EDIT");
+//     text_layer_set_text(text_layer, "EDIT");
   }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  previous_exersize();
-  char* str = weight_string(); 
-  text_layer_set_text(text_layer, str);
+  char* str;
+  previous_exercise();
+  str = exercise_string(); 
+  text_layer_set_text(exercise_layer, str);
+  str = weight_string(); 
+  text_layer_set_text(weight_layer, str);
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  next_exersize();
-  char* str = weight_string();
-  text_layer_set_text(text_layer, str);
+  char* str;
+  next_exercise();
+  str = exercise_string(); 
+  text_layer_set_text(exercise_layer, str);
+  str = weight_string();
+  text_layer_set_text(weight_layer, str);
 }
 
 static void click_config_provider(void *context) {
@@ -97,20 +142,29 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 30 }, .size = { bounds.size.w, bounds.size.h } });
-  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
-  text_layer_set_text(text_layer, weights.name);
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  exercise_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, bounds.size.h/2 } });
+//   text_layer_set_background_color(exercise_layer, GColorBlack);
+  text_layer_set_font(exercise_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28));
+  text_layer_set_text(exercise_layer, weights.name);
+  text_layer_set_text_alignment(exercise_layer, GTextAlignmentCenter);
+  
+  weight_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 }, .size = { bounds.size.w, bounds.size.h/2 } });
+  text_layer_set_font(weight_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_text(weight_layer, weights.name);
+  text_layer_set_text_alignment(weight_layer, GTextAlignmentCenter);
+  
+  layer_add_child(window_layer, text_layer_get_layer(exercise_layer));
+  layer_add_child(window_layer, text_layer_get_layer(weight_layer));
 }
 
 static void window_unload(Window *window) {
-  text_layer_destroy(text_layer);
+  text_layer_destroy(exercise_layer);
+  text_layer_destroy(weight_layer);
 }
 
 static void init(void) {
   mode = VIEW;
-  current_exersize = 0;
+  current_exercise = 0;
   
   // init weights @TODO change this to read in weights from persisten memory
   weights.name = "Tom";
