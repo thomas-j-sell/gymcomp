@@ -1,3 +1,14 @@
 
 # Ignore build generated files
 build
+.lock-waf*
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Mac OS X
+.DS_Store
