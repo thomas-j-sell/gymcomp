@@ -144,12 +144,12 @@ static void window_load(Window *window) {
 
   exercise_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, bounds.size.h/2 } });
 //   text_layer_set_background_color(exercise_layer, GColorBlack);
-  text_layer_set_font(exercise_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28));
+  text_layer_set_font(exercise_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text(exercise_layer, weights.name);
   text_layer_set_text_alignment(exercise_layer, GTextAlignmentCenter);
   
   weight_layer = text_layer_create((GRect) { .origin = { 0, bounds.size.h/2 }, .size = { bounds.size.w, bounds.size.h/2 } });
-  text_layer_set_font(weight_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_font(weight_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   text_layer_set_text(weight_layer, weights.name);
   text_layer_set_text_alignment(weight_layer, GTextAlignmentCenter);
   
