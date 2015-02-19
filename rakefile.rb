@@ -1,6 +1,6 @@
 require 'rake'
 
-phone = 'iPhsidus'
+phone = 'iPhsidus' # could be hostname or ip address
 
 task :default => [:run]
 
@@ -9,7 +9,7 @@ task :run do
   cmd = "pebble build && "
   cmd += "pebble install --phone #{phone}"
   sh cmd
-  sleep 1
+  sleep 1 # without sleep, pebble app rejects connection: already conntected to install
   cmd = "pebble logs --phone #{phone}"
   sh cmd
 end
