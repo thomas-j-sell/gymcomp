@@ -24,6 +24,8 @@ int current_exercise = 0;
 // @TODO set defaults to 0
 void set_default_weights()  
 {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "seting default weights");
+  weights.name = "Tom";
   weights.bench = 85;
   weights.back = 85;
   weights.biceps = 45;
@@ -40,6 +42,7 @@ void set_default_weights()
 //function to save data to watch
 void store_weights()
 {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "preparing to store weights");
   uint32_t key = 0;
   persist_write_string(key, weights.name);
   key = 1;
@@ -62,19 +65,23 @@ void store_weights()
   persist_write_int(key, weights.calves);
   key = 10;
   persist_write_int(key, weights.legpress);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Stored weights");
 }
 
 
 //funtion to load data from watch
 void load_weights()
 {
-  //check for valid storage keys
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "checking for persitent records");
   uint32_t key = 0;
   if(persist_exists(key)) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Reading name");
     int buffsize = 10;
     char buffer[buffsize];
     persist_read_string(key,buffer,buffsize);
-    strcpy(weights.name, buffer);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Read name");
+    weights.name = buffer;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "copyied name");
 
     key = 1;
     weights.bench = persist_read_int(key);
@@ -98,6 +105,7 @@ void load_weights()
     weights.legpress = persist_read_int(key);
 
   } else {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "No persistent records, setting defaults");
     set_default_weights();
     store_weights();
   }

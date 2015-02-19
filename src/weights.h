@@ -12,4 +12,8 @@ void previous_exercise();
 char* cur_exercise_str();
 char* cur_weight_str();
 
+// alter current exercise weight
+void increment_cur_weight();
+void decrement_cur_weight();
+
 char* get_weights_name();
