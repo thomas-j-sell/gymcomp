@@ -7,23 +7,19 @@
 static Window *window;
 static TextLayer *exercise_layer;
 static TextLayer *weight_layer;
+static InverterLayer *edit_layer;
 int mode;
 
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if(mode){
-    mode = VIEW;
-//     text_layer_set_text(text_layer, "VIEW");
-  }else{
-    mode = EDIT;
-//     text_layer_set_text(text_layer, "EDIT");
-  }
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
+  mode = mode ? VIEW : EDIT;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
+  layer_set_hidden((struct Layer *)edit_layer, !mode);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+  mode ? increment_cur_weight() : previous_exercise();
   char* str;
-  previous_exercise();
   str = cur_exercise_str(); 
   text_layer_set_text(exercise_layer, str);
   str = cur_weight_str(); 
@@ -31,8 +27,8 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+  mode ? decrement_cur_weight() : next_exercise();
   char* str;
-  next_exercise();
   str = cur_exercise_str(); 
   text_layer_set_text(exercise_layer, str);
   str = cur_weight_str();
@@ -50,7 +46,6 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   exercise_layer = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, bounds.size.h/2 } });
-//   text_layer_set_background_color(exercise_layer, GColorBlack);
   text_layer_set_font(exercise_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text(exercise_layer, cur_exercise_str());
   text_layer_set_text_alignment(exercise_layer, GTextAlignmentCenter);
@@ -59,9 +54,13 @@ static void window_load(Window *window) {
   text_layer_set_font(weight_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
   text_layer_set_text(weight_layer, cur_weight_str());
   text_layer_set_text_alignment(weight_layer, GTextAlignmentCenter);
-  
+
+  edit_layer = inverter_layer_create((GRect) { .origin = { 0, bounds.size.h/2 }, .size = { bounds.size.w, bounds.size.h/2 } });
+  layer_set_hidden((struct Layer *)edit_layer, true);
+
   layer_add_child(window_layer, text_layer_get_layer(exercise_layer));
   layer_add_child(window_layer, text_layer_get_layer(weight_layer));
+  layer_add_child(window_layer, inverter_layer_get_layer(edit_layer));
 }
 
 static void window_unload(Window *window) {

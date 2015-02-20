@@ -2,6 +2,8 @@
 #include "weights.h"
 #include <stdio.h>
 
+// @TODO add method to save multiple instances of Weights, pass in a number to manipulate storage keys
+
 struct Weights
 {
   char* name;
@@ -199,6 +201,78 @@ char* cur_weight_str() {
     break;
   }
   return str;
+}
+
+void increment_cur_weight()
+{
+  switch(current_exercise) {
+    case 0 :
+    weights.bench += 5;
+    break;
+    case 1 :
+    weights.back += 5;
+    break;
+    case 2 :
+    weights.biceps += 5;
+    break;
+    case 3 :
+    weights.triceps += 5;
+    break;
+    case 4 :
+    weights.shoulder += 5;
+    break;
+    case 5 :
+    weights.ab += 5;
+    break;
+    case 6 :
+    weights.quads += 5;
+    break;
+    case 7 :
+    weights.hammies += 5;
+    break;
+    case 8 :
+    weights.calves += 5;
+    break;
+    case 9 :
+    weights.legpress += 5;
+    break;
+  }
+}
+
+void decrement_cur_weight()
+{
+  switch(current_exercise) {
+    case 0 :
+    weights.bench -= 5;
+    break;
+    case 1 :
+    weights.back -= 5;
+    break;
+    case 2 :
+    weights.biceps -= 5;
+    break;
+    case 3 :
+    weights.triceps -= 5;
+    break;
+    case 4 :
+    weights.shoulder -= 5;
+    break;
+    case 5 :
+    weights.ab -= 5;
+    break;
+    case 6 :
+    weights.quads -= 5;
+    break;
+    case 7 :
+    weights.hammies -= 5;
+    break;
+    case 8 :
+    weights.calves -= 5;
+    break;
+    case 9 :
+    weights.legpress -= 5;
+    break;
+  }
 }
 
 char* get_weights_name()
