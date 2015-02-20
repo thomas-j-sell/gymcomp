@@ -11,14 +11,8 @@ int mode;
 
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  if(mode){
-    mode = VIEW;
-//     text_layer_set_text(text_layer, "VIEW");
-  }else{
-    mode = EDIT;
-//     text_layer_set_text(text_layer, "EDIT");
-  }
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
+  mode = mode ? VIEW : EDIT;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
