@@ -9,7 +9,7 @@ task :run do
   cmd = "pebble build && "
   cmd += "pebble install --phone #{phone}"
   sh cmd
-  sleep 1 # without sleep, pebble app rejects connection: already conntected to install
+  sleep 1 # wait for install connection to end before connecting with logs
   cmd = "pebble logs --phone #{phone}"
   sh cmd
 end

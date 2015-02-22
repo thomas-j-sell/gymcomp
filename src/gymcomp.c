@@ -13,7 +13,7 @@ int mode;
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   mode = mode ? VIEW : EDIT;
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Mode: %i", mode);
   layer_set_hidden((struct Layer *)edit_layer, !mode);
 }
 
@@ -69,11 +69,11 @@ static void window_unload(Window *window) {
 }
 
 static void init(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Init");
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Init");
   mode = VIEW;
   
   load_weights();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Loaded weights");
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Loaded weights");
   
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
@@ -93,7 +93,7 @@ static void deinit(void) {
 int main(void) {
   init();
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
 
   app_event_loop();
   deinit();
