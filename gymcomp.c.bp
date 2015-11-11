@@ -20,8 +20,6 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   }else{
     effect_layer_remove_effect(edit_layer);
   }
-  layer_mark_dirty(effect_layer_get_layer(edit_layer));
-  // eff
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
