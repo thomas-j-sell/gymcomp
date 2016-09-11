@@ -18,6 +18,7 @@ struct Weights
   int hammies;
   int calves;
   int legpress;
+  int lback;
 };
 
 struct Weights weights;
@@ -29,16 +30,17 @@ void set_default_weights()
 {
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "seting default weights");
   weights.name = "Tom";
-  weights.bench = 85;
-  weights.back = 85;
-  weights.biceps = 45;
-  weights.triceps = 100;
-  weights.shoulder = 25;
-  weights.ab = 40;
-  weights.quads = 115;
-  weights.hammies = 85;
-  weights.calves = 165;
+  weights.bench = 105;
+  weights.back = 110;
+  weights.triceps = 125;
+  weights.biceps = 55;
+  weights.shoulder = 45;
+  weights.ab = 45;
+  weights.quads = 125;
+  weights.hammies = 70;
+  weights.calves = 160;
   weights.legpress = 180;
+  weights.lback = 90;
 }
 
 
@@ -53,9 +55,9 @@ void store_weights()
   key = 2;
   persist_write_int(key, weights.back);
   key = 3;
-  persist_write_int(key, weights.biceps);
-  key = 4;
   persist_write_int(key, weights.triceps);
+  key = 4;
+  persist_write_int(key, weights.biceps);
   key = 5;
   persist_write_int(key, weights.shoulder);
   key = 6;
@@ -68,6 +70,8 @@ void store_weights()
   persist_write_int(key, weights.calves);
   key = 10;
   persist_write_int(key, weights.legpress);
+  key = 11;
+  persist_write_int(key, weights.lback);
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Stored weights");
 }
 
@@ -91,9 +95,9 @@ void load_weights()
     key = 2;
     weights.back = persist_read_int(key);
     key = 3;
-    weights.biceps = persist_read_int(key);
-    key = 4;
     weights.triceps = persist_read_int(key);
+    key = 4;
+    weights.biceps = persist_read_int(key);
     key = 5;
     weights.shoulder = persist_read_int(key);
     key = 6;
@@ -106,6 +110,8 @@ void load_weights()
     weights.calves = persist_read_int(key);
     key = 10;
     weights.legpress = persist_read_int(key);
+    key = 11;
+    weights.lback = persist_read_int(key);
 
   } else {
     // APP_LOG(APP_LOG_LEVEL_DEBUG, "No persistent records, setting defaults");
@@ -115,7 +121,7 @@ void load_weights()
 }
 
 void next_exercise() {
-  if(current_exercise == 9 )
+  if(current_exercise == 10 )
     current_exercise = 0;
   else
     current_exercise = current_exercise + 1;
@@ -123,14 +129,14 @@ void next_exercise() {
 
 void previous_exercise() {
   if(current_exercise == 0 )
-    current_exercise = 9;
+    current_exercise = 10;
   else
     current_exercise = current_exercise - 1;
 }
 
 char* cur_exercise_str() {
   static char* str;
-  
+
   switch(current_exercise) {
     case 0 :
     str = "BENCH";
@@ -139,10 +145,10 @@ char* cur_exercise_str() {
     str = "BACK";
     break;
     case 2 :
-    str = "BICEPS";
+    str = "TRICEPS";
     break;
     case 3 :
-    str = "TRICEPS";
+    str = "BICEPS";
     break;
     case 4 :
     str = "SHOULDER";
@@ -162,13 +168,16 @@ char* cur_exercise_str() {
     case 9 :
     str = "LEG PRESS";
     break;
+    case 10 :
+    str = "LOW BACK";
+    break;
   }
   return str;
 }
 
 char* cur_weight_str() {
   static char str[65];
-  
+
   switch(current_exercise) {
     case 0 :
     snprintf(str, 10, "%d", weights.bench);
@@ -177,10 +186,10 @@ char* cur_weight_str() {
     snprintf(str, 10, "%d", weights.back);
     break;
     case 2 :
-    snprintf(str, 10, "%d", weights.biceps);
+    snprintf(str, 10, "%d", weights.triceps);
     break;
     case 3 :
-    snprintf(str, 10, "%d", weights.triceps);
+    snprintf(str, 10, "%d", weights.biceps);
     break;
     case 4 :
     snprintf(str, 10, "%d", weights.shoulder);
@@ -200,6 +209,9 @@ char* cur_weight_str() {
     case 9 :
     snprintf(str, 10, "%d", weights.legpress);
     break;
+    case 10 :
+    snprintf(str, 10, "%d", weights.lback);
+    break;
   }
   return str;
 }
@@ -214,10 +226,10 @@ void increment_cur_weight()
     weights.back += 5;
     break;
     case 2 :
-    weights.biceps += 5;
+    weights.triceps += 5;
     break;
     case 3 :
-    weights.triceps += 5;
+    weights.biceps += 5;
     break;
     case 4 :
     weights.shoulder += 5;
@@ -237,6 +249,9 @@ void increment_cur_weight()
     case 9 :
     weights.legpress += 5;
     break;
+    case 10 :
+    weights.lback += 5;
+    break;
   }
 }
 
@@ -250,10 +265,10 @@ void decrement_cur_weight()
     weights.back -= 5;
     break;
     case 2 :
-    weights.biceps -= 5;
+    weights.triceps -= 5;
     break;
     case 3 :
-    weights.triceps -= 5;
+    weights.biceps -= 5;
     break;
     case 4 :
     weights.shoulder -= 5;
@@ -272,6 +287,9 @@ void decrement_cur_weight()
     break;
     case 9 :
     weights.legpress -= 5;
+    break;
+    case 10 :
+    weights.lback -= 5;
     break;
   }
 }
