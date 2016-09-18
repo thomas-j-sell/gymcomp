@@ -11,7 +11,7 @@
 float my_sqrt(const float x)
 {
   const float xhalf = 0.5f*x;
- 
+
   union // get bits for floating value
   {
     float x;
@@ -20,9 +20,9 @@ float my_sqrt(const float x)
   u.x = x;
   u.i = SQRT_MAGIC_F - (u.i >> 1);  // gives initial guess y0
   return x*u.x*(1.5f - xhalf*u.x*u.x);// Newton step, repeating increases accuracy 
-}   
+}
 
-float my_floor(float x) 
+float my_floor(float x)
 {
   return ((int)x);
 }
@@ -35,10 +35,10 @@ float my_fabs(float x)
 
 float my_atan(float x)
 {
-  if (x>0) 
+  if (x>0)
   {
     return (M_PI/2)*(0.596227*x + x*x)/(1 + 2*0.596227*x + x*x);
-  } 
+  }
   else
   {
     return -(my_atan(-x));

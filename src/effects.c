@@ -1,38 +1,37 @@
 #include <pebble.h>
 #include "effects.h"
 #include "math.h"
-  
-  
+
+
 // { ********* Graphics utility functions (probablu should be seaparated into anothe file?) *********
-  
-  
+
+
 // set pixel color at given coordinates 
 void set_pixel(BitmapInfo bitmap_info, int y, int x, uint8_t color) {
-  
-#ifndef PBL_PLATFORM_APLITE  
+
+#ifndef PBL_PLATFORM_APLITE
   if (bitmap_info.bitmap_format == GBitmapFormat1BitPalette) { // for 1bit palette bitmap on Basalt --- verify if it needs to be different
-     bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] ^= (-color ^ bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8]) & (1 << (x % 8)); 
+     bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] ^= (-color ^ bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8]) & (1 << (x % 8));
 #else
   if (bitmap_info.bitmap_format == GBitmapFormat1Bit) { // for 1 bit bitmap on Aplite  --- verify if it needs to be different
-     bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] ^= (-color ^ bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8]) & (1 << (x % 8)); 
+     bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] ^= (-color ^ bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8]) & (1 << (x % 8));
 #endif
   } else { // othersise (assuming GBitmapFormat8Bit) going byte-wise
-      
+
      #ifndef PBL_PLATFORM_CHALK
        bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x] = color;
      #else
        GBitmapDataRowInfo info = gbitmap_get_data_row_info(bitmap_info.bitmap, y);
        if ((x >= info.min_x) && (x <= info.max_x)) info.data[x] = color;
-     #endif  
-  
+     #endif
+
   }
-      
 }
 
-// get pixel color at given coordinates 
+// get pixel color at given coordinates
 uint8_t get_pixel(BitmapInfo bitmap_info, int y, int x) {
 
-#ifndef PBL_PLATFORM_APLITE  
+#ifndef PBL_PLATFORM_APLITE
   if (bitmap_info.bitmap_format == GBitmapFormat1BitPalette) { // for 1bit palette bitmap on Basalt shifting left to get correct bit
     return (bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] << (x % 8)) & 128;
 #else
@@ -40,26 +39,25 @@ uint8_t get_pixel(BitmapInfo bitmap_info, int y, int x) {
     return (bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x / 8] >> (x % 8)) & 1;
 #endif
   } else {  // othersise (assuming GBitmapFormat8Bit) going byte-wise
-    
+
     #ifndef PBL_PLATFORM_CHALK
-       return bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x]; 
+       return bitmap_info.bitmap_data[y*bitmap_info.bytes_per_row + x];
      #else
        GBitmapDataRowInfo info = gbitmap_get_data_row_info(bitmap_info.bitmap, y);
        if ((x >= info.min_x) && (x <= info.max_x))
          return info.data[x];
-       else 
+       else
          return -1;
-     #endif  
+     #endif
   }
-  
-}  
-  
+}
+
 
 // converts color between 1bit and 8bit palettes (for GBitmapFormat1BitPalette assuming black & white)
 uint8_t PalColor(uint8_t in_color, GBitmapFormat in_format, GBitmapFormat out_format) {
-  
+
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "IN = %d, OUT = %d", in_format, out_format);
- 
+
   if ((in_format == 0 || in_format == 2) && (out_format == 1 || out_format == 5)) { // converting  GBitmapFormat1Bit or GBitmapFormat1BitPalette to GBitmapFormat8Bit or GBitmapFormatCircular
      return in_color == 0? 192 : 255;
   } else if ((in_format == 1 || in_format == 5) && (out_format == 0 || out_format == 2) ) { // converting GBitmapFormat8Bit or GBitmapFormatCircular to GBitmapFormat1Bit or GBitmapFormat1BitPalette 
@@ -68,7 +66,7 @@ uint8_t PalColor(uint8_t in_color, GBitmapFormat in_format, GBitmapFormat out_fo
     return in_color;
   }
 }
- 
+
 
 // THE EXTREMELY FAST LINE ALGORITHM Variation E (Addition Fixed Point PreCalc Small Display)
 // Small Display (256x256) resolution.
@@ -76,14 +74,14 @@ uint8_t PalColor(uint8_t in_color, GBitmapFormat in_format, GBitmapFormat out_fo
 void set_line(BitmapInfo bitmap_info, int y, int x, int y2, int x2, uint8_t draw_color, uint8_t skip_color, uint8_t *visited) {
   bool yLonger = false; int shortLen=y2-y; int longLen=x2-x;
   uint8_t temp_pixel;  int temp_x, temp_y;
-  
+
   GRect bounds = gbitmap_get_bounds(bitmap_info.bitmap);
-  
+
   if (abs(shortLen)>abs(longLen)) {
     int swap=shortLen;
     shortLen=longLen; longLen=swap; yLonger=true;
   }
-  
+
   int decInc;
   if (longLen==0) decInc=0;
   else decInc = (shortLen << 8) / longLen;
@@ -126,7 +124,7 @@ void set_line(BitmapInfo bitmap_info, int y, int x, int y2, int x2, uint8_t draw
       }
       j-=decInc;
     }
-    return; 
+    return;
   }
 
   if (longLen>0) {
@@ -144,7 +142,7 @@ void set_line(BitmapInfo bitmap_info, int y, int x, int y2, int x2, uint8_t draw
               visited[temp_y*20 + temp_x/8] ^= (-1 ^ visited[temp_y*20 + temp_x/8]) & (1 << (temp_x % 8));
             }
           #endif
-      }  
+      }
       j+=decInc;
     }
     return;
@@ -163,19 +161,18 @@ void set_line(BitmapInfo bitmap_info, int y, int x, int y2, int x2, uint8_t draw
               visited[temp_y*20 + temp_x/8] ^= (-1 ^ visited[temp_y*20 + temp_x/8]) & (1 << (temp_x % 8));
             }
           #endif
-    }  
+    }
     j-=decInc;
   }
-
 }
 
-//determine if array of colors contains specific color  
+//determine if array of colors contains specific color
 bool gcolor_contains(GColor *color_array, GColor pixel_color)  {
   int i=0;
   while (!gcolor_equal(color_array[i], GColorClear)){
     if (gcolor_equal(color_array[i], pixel_color)) {
       return true;
-    }  
+    }
     i++;
   }
   return false;
@@ -183,19 +180,19 @@ bool gcolor_contains(GColor *color_array, GColor pixel_color)  {
 
 //  ********* Graphics utility functions (probablu should be seaparated into anothe file?) ********* }
 
-  
+
 
 // inverter effect.
 void effect_invert(GContext* ctx,  GRect position, void* param) {
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++)
         #ifdef PBL_COLOR // on Basalt simple doing NOT on entire returned byte/pixel
@@ -203,9 +200,8 @@ void effect_invert(GContext* ctx,  GRect position, void* param) {
         #else // on Aplite since only 1 and 0 is returning, doing "not" by 1 - pixel
           set_pixel(bitmap_info, y + position.origin.y, x + position.origin.x, 1 - get_pixel(bitmap_info, y + position.origin.y, x + position.origin.x));
         #endif
- 
-  graphics_release_frame_buffer(ctx, fb);          
-          
+
+  graphics_release_frame_buffer(ctx, fb);
 }
 
 // colorize effect - given a target color, replace it with a new color
@@ -215,13 +211,13 @@ void effect_colorize(GContext* ctx,  GRect position, void* param) {
 #ifdef PBL_COLOR // only logical to do anything on Basalt - otherwise you're just ... drawing a black|white GRect
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   EffectColorpair *paint = (EffectColorpair *)param;
 
   for (int y = 0; y < position.size.h; y++){
@@ -243,13 +239,13 @@ void effect_colorswap(GContext* ctx,  GRect position, void* param) {
 #ifdef PBL_COLOR // only logical to do anything on Basalt - otherwise you're just ... doing an invert
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
- 
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   EffectColorpair *swap = (EffectColorpair *)param;
   GColor pixel;
 
@@ -270,7 +266,7 @@ void effect_colorswap(GContext* ctx,  GRect position, void* param) {
 void effect_invert_bw_only(GContext* ctx,  GRect position, void* param) {
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
@@ -280,7 +276,7 @@ void effect_invert_bw_only(GContext* ctx,  GRect position, void* param) {
 #ifdef PBL_COLOR
   GColor pixel;
 #endif
-  
+
   for (int y = 0; y < position.size.h; y++) {
      for (int x = 0; x < position.size.w; x++) {
         #ifdef PBL_COLOR // on Basalt invert only black or white
@@ -294,9 +290,9 @@ void effect_invert_bw_only(GContext* ctx,  GRect position, void* param) {
         #endif
      }
   }
- 
-  graphics_release_frame_buffer(ctx, fb);          
-          
+
+  graphics_release_frame_buffer(ctx, fb);
+
 }
 
 // invert brightness of colors (leaves hue more or less intact and does not apply to black and white).
@@ -304,7 +300,7 @@ void effect_invert_brightness(GContext* ctx,  GRect position, void* param) {
 #ifdef PBL_COLOR
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
- 
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
@@ -313,14 +309,14 @@ void effect_invert_brightness(GContext* ctx,  GRect position, void* param) {
 
   GColor pixel;
   GColor pixel_new;
-  
+
   for (int y = 0; y < position.size.h; y++) {
      for (int x = 0; x < position.size.w; x++) {
          pixel.argb = get_pixel(bitmap_info, y + position.origin.y, x + position.origin.x);
-         
+
          if (!gcolor_equal(pixel, GColorBlack) && !gcolor_equal(pixel, GColorWhite)) {
            // Only apply if not black/white (add effect_invert_bw_only for that too)
-           
+
            // Color spread is not even, so need to handcraft the opposing brightness of colors,
            // which is probably subjective and open for improvement
            if (gcolor_equal(pixel, GColorOxfordBlue))
@@ -447,24 +443,24 @@ void effect_invert_brightness(GContext* ctx,  GRect position, void* param) {
              pixel_new = GColorChromeYellow;
            else if (gcolor_equal(pixel, GColorPastelYellow))
              pixel_new = GColorChromeYellow;
-           
+
            set_pixel(bitmap_info, y + position.origin.y, x + position.origin.x, pixel_new.argb);
          }
      }
   }
- 
-  graphics_release_frame_buffer(ctx, fb);          
-          
+
+  graphics_release_frame_buffer(ctx, fb);
+
 #endif
 }
 
 // vertical mirror effect.
 void effect_mirror_vertical(GContext* ctx, GRect position, void* param) {
-  uint8_t temp_pixel;  
-  
+  uint8_t temp_pixel;
+
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
@@ -477,18 +473,18 @@ void effect_mirror_vertical(GContext* ctx, GRect position, void* param) {
         set_pixel(bitmap_info, y + position.origin.y, x + position.origin.x, get_pixel(bitmap_info, position.origin.y + position.size.h - y - 2, x + position.origin.x));
         set_pixel(bitmap_info, position.origin.y + position.size.h - y - 2, x + position.origin.x, temp_pixel);
      }
-  
+
   graphics_release_frame_buffer(ctx, fb);
 }
 
 
 // horizontal mirror effect.
 void effect_mirror_horizontal(GContext* ctx, GRect position, void* param) {
-  uint8_t temp_pixel;  
-  
+  uint8_t temp_pixel;
+
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
@@ -501,7 +497,7 @@ void effect_mirror_horizontal(GContext* ctx, GRect position, void* param) {
         set_pixel(bitmap_info, y + position.origin.y, x + position.origin.x, get_pixel(bitmap_info, y + position.origin.y, position.origin.x + position.size.w - x - 2));
         set_pixel(bitmap_info, y + position.origin.y, position.origin.x + position.size.w - x - 2, temp_pixel);
      }
-  
+
   graphics_release_frame_buffer(ctx, fb);
 }
 
@@ -512,13 +508,13 @@ void effect_rotate_90_degrees(GContext* ctx,  GRect position, void* param){
 
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   bool right = (bool)param;
   uint8_t qtr, xCn, yCn, temp_pixel;
   xCn= position.origin.x + position.size.w /2;
@@ -544,7 +540,7 @@ void effect_rotate_90_degrees(GContext* ctx,  GRect position, void* param){
         set_pixel(bitmap_info, yCn -c2, xCn +c1, temp_pixel);
       }
      }
-  
+
   graphics_release_frame_buffer(ctx, fb);
 }
 
@@ -554,7 +550,7 @@ void effect_rotate_90_degrees(GContext* ctx,  GRect position, void* param){
 // use the percentage macro EL_ZOOM(150,60). In this example: Y- zoom in 150%, X- zoom out to 60% 
 void effect_zoom(GContext* ctx,  GRect position, void* param){
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
@@ -590,13 +586,13 @@ void effect_zoom(GContext* ctx,  GRect position, void* param){
 // Parameters: lens focal(high byte) and object distance(low byte)
 void effect_lens(GContext* ctx,  GRect position, void* param){
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   uint8_t d,r, xCn, yCn;
 
   xCn= position.origin.x + position.size.w /2;
@@ -607,14 +603,14 @@ void effect_lens(GContext* ctx,  GRect position, void* param){
   r= d/2; // radius of lens
   float focal =   (int32_t)param >>8 & 0xFF;// focal point of lens
   float obj_dis = (int32_t)param & 0xFF;//distance of object from focal point.
-  
+
   for (int y = r; y >= 0; --y)
     for (int x = r; x >= 0; --x)
       if (x*x+y*y < r*r)
       {
         int Y1= my_tan(my_asin(y/focal))*obj_dis;
         int X1= my_tan(my_asin(x/focal))*obj_dis;
-        set_pixel(bitmap_info, yCn +y, xCn +x, get_pixel(bitmap_info, yCn +Y1, xCn +X1)); 
+        set_pixel(bitmap_info, yCn +y, xCn +x, get_pixel(bitmap_info, yCn +Y1, xCn +X1));
         set_pixel(bitmap_info, yCn +y, xCn -x, get_pixel(bitmap_info, yCn +Y1, xCn -X1));
         set_pixel(bitmap_info, yCn -y, xCn +x, get_pixel(bitmap_info, yCn -Y1, xCn +X1));
         set_pixel(bitmap_info, yCn -y, xCn -x, get_pixel(bitmap_info, yCn -Y1, xCn -X1));
@@ -622,19 +618,19 @@ void effect_lens(GContext* ctx,  GRect position, void* param){
     graphics_release_frame_buffer(ctx, fb);
 //Todo: Change to lock-up arcsin table in the future. (Currently using floating point math library that is relatively big & slow)
 }
-  
+
 // mask effect.
-// see struct EffectMask for parameter description  
+// see struct EffectMask for parameter description
 void effect_mask(GContext* ctx, GRect position, void* param) {
-  GColor temp_pixel;  
+  GColor temp_pixel;
   EffectMask *mask = (EffectMask *)param;
 
   //drawing background - only if real color is passed
   if (!gcolor_equal(mask->background_color, GColorClear)) {
     graphics_context_set_fill_color(ctx, mask->background_color);
-    graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone); 
-  }  
-  
+    graphics_fill_rect(ctx, GRect(0, 0, position.size.w, position.size.h), 0, GCornerNone);
+  }
+
   //if text mask is used - drawing text
   if (mask->text) {
      graphics_context_set_text_color(ctx, mask->mask_colors[0]); // for text using only 1st color from array of mask colors
@@ -642,23 +638,23 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
   } else if (mask->bitmap_mask) { // othersise - bitmap mask is used - draw bimap
      graphics_draw_bitmap_in_rect(ctx, mask->bitmap_mask, GRect(0, 0, position.size.w, position.size.h));
   }
-    
+
   //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
-  
+
   //capturing background bitmap
   BitmapInfo bg_bitmap_info;
   bg_bitmap_info.bitmap = mask->bitmap_background;
   bg_bitmap_info.bitmap_data =  gbitmap_get_data(mask->bitmap_background);
   bg_bitmap_info.bytes_per_row =  gbitmap_get_bytes_per_row(mask->bitmap_background);
   bg_bitmap_info.bitmap_format = gbitmap_get_format(mask->bitmap_background);
-  
+
   //looping throughout layer replacing mask with bg bitmap
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++) {
@@ -667,12 +663,12 @@ void effect_mask(GContext* ctx, GRect position, void* param) {
          // getting pixel from background bitmap (adjusted to pallette by PalColor function because palette of bg bitmap and framebuffer may differ)
          // YG OCT-25-2015: replaced "y + position.origin.y, x + position.origin.x" with "y + 0, x + 0" since in mask bitmap we start without offset
          set_pixel(bitmap_info, y + position.origin.y, x + position.origin.x, PalColor(get_pixel(bg_bitmap_info, y + 0, x + 0), bg_bitmap_info.bitmap_format, bitmap_info.bitmap_format));
-       } 
-  
+       }
+
   }
-  
+
   graphics_release_frame_buffer(ctx, fb);
-  
+
 }
 
 void effect_fps(GContext* ctx, GRect position, void* param) {
@@ -680,7 +676,7 @@ void effect_fps(GContext* ctx, GRect position, void* param) {
   static char buff[16];
   time_t tt;
   uint16_t ms;
-  
+
   if(((EffectFPS*)param)->starttt) {
     time_ms(&tt,&ms);
     ++((EffectFPS*)param)->frame;
@@ -699,91 +695,87 @@ void effect_fps(GContext* ctx, GRect position, void* param) {
 
 
 // shadow effect.
-// see struct EffecOffset for parameter description  
+// see struct EffecOffset for parameter description
 void effect_shadow(GContext* ctx, GRect position, void* param) {
-  GColor temp_pixel;  
+  GColor temp_pixel;
   int shadow_x, shadow_y;
   EffectOffset *shadow = (EffectOffset *)param;
-  
+
   #ifndef PBL_COLOR
     uint8_t draw_color = gcolor_equal(shadow->offset_color, GColorWhite)? 1 : 0;
     uint8_t skip_color = gcolor_equal(shadow->orig_color, GColorWhite)? 1 : 0;
   #endif
-  
+
    //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
 
-  
+
   //looping throughout making shadow
   for (int y = 0; y < position.size.h; y++)
      for (int x = 0; x < position.size.w; x++) {
        temp_pixel = (GColor)get_pixel(bitmap_info, y + position.origin.y, x + position.origin.x);
-       
+
        if (gcolor_equal(temp_pixel, shadow->orig_color)) {
          shadow_x =  x + position.origin.x + shadow->offset_x;
          shadow_y =  y + position.origin.y + shadow->offset_y;
-         
+
          if (shadow->option == 1) {
             #ifdef PBL_COLOR // for Basalt simple calling line-drawing routine
                set_line(bitmap_info, y + position.origin.y, x + position.origin.x, shadow_y, shadow_x, shadow->offset_color.argb, shadow->orig_color.argb, NULL);
             #else // for Aplite - passing user-defined array to determine if pixels have been set or not
                set_line(bitmap_info, y + position.origin.y, x + position.origin.x, shadow_y, shadow_x, draw_color, skip_color, shadow->aplite_visited); 
             #endif
-           
+
          } else {
-           
+
              if (shadow_x >= 0 && shadow_x <=143 && shadow_y >= 0 && shadow_y <= 167) {
-             
+
                temp_pixel = (GColor)get_pixel(bitmap_info, shadow_y, shadow_x);
                if (!gcolor_equal(temp_pixel, shadow->orig_color) & !gcolor_equal(temp_pixel, shadow->offset_color) ) {
                  #ifdef PBL_COLOR
-                    set_pixel(bitmap_info,  shadow_y, shadow_x, shadow->offset_color.argb);  
+                    set_pixel(bitmap_info,  shadow_y, shadow_x, shadow->offset_color.argb);
                  #else
                     set_pixel(bitmap_info,  shadow_y, shadow_x, gcolor_equal(shadow->offset_color, GColorWhite)? 1 : 0);
                  #endif
                }
              }
-           
+
          }
-         
-         
        }
   }
-         
   graphics_release_frame_buffer(ctx, fb);
- 
 }
 
 void effect_outline(GContext* ctx, GRect position, void* param) {
-  GColor temp_pixel;  
+  GColor temp_pixel;
   int outlinex[8];
   int outliney[8];
   EffectOffset *outline = (EffectOffset *)param;
-  
+
    //capturing framebuffer bitmap
   GBitmap *fb = graphics_capture_frame_buffer(ctx);
-  
+
   BitmapInfo bitmap_info;
   bitmap_info.bitmap = fb;
   bitmap_info.bitmap_data =  gbitmap_get_data(fb);
   bitmap_info.bytes_per_row = gbitmap_get_bytes_per_row(fb);
   bitmap_info.bitmap_format = gbitmap_get_format(fb);
 
-  
+
   //loop through pixels from framebuffer
   for (int y = 0; y < position.size.h; y++)
     for (int x = 0; x < position.size.w; x++) {
-      for (int a = 0; a <= outline->offset_x; a++) 
+      for (int a = 0; a <= outline->offset_x; a++)
         for (int b = 0; b <= outline->offset_y; b++) {
-  
+
           temp_pixel = (GColor)get_pixel(bitmap_info, y + position.origin.y, x + position.origin.x);
-       
+
           if (gcolor_equal(temp_pixel, outline->orig_color)) {
             outlinex[0] = x + position.origin.x - a;
             outliney[0] = y + position.origin.y - b;
@@ -793,7 +785,7 @@ void effect_outline(GContext* ctx, GRect position, void* param) {
             outliney[2] = y + position.origin.y + b;
             outlinex[3] = x + position.origin.x + a;
             outliney[3] = y + position.origin.y - b;
-         
+
             for (int i = 0; i < 4; i++) {
               // TODO: centralize the constants
               if (outlinex[i] >= 0 && outlinex[i] <=144 && outliney[i] >= 0 && outliney[i] <= 168) {

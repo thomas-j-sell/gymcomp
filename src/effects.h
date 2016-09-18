@@ -1,14 +1,14 @@
 #pragma once
-#include <pebble.h>  
+#include <pebble.h>
 
-// used to pass bimap info to get/set pixel accurately  
+// used to pass bimap info to get/set pixel accurately
 typedef struct {
    GBitmap *bitmap;  // actual bitmap for Chalk raw manipulation
    uint8_t *bitmap_data;
    int bytes_per_row;
    GBitmapFormat bitmap_format;
 }  BitmapInfo;
-  
+
 // structure of mask for masking effects
 typedef struct {
   GBitmap*  bitmap_mask; // bitmap used for mask (when masking by bitmap)
@@ -19,14 +19,14 @@ typedef struct {
   GFont     font; // font used for text mask;
   GTextOverflowMode text_overflow; // overflow used for text mask;
   GTextAlignment  text_align; // alignment used for text masks
-} EffectMask;  
+} EffectMask;
 
 // structure for FPS effect
 typedef struct {
   time_t  starttt; // time_t at the first refresh
   uint16_t  startms; // ms at the first refresh
   uint32_t  frame; // frame number
-} EffectFPS;  
+} EffectFPS;
 
 // structure for effect at given offset (currently used for effect_shadow)
 typedef struct {
@@ -36,7 +36,7 @@ typedef struct {
   int8_t offset_y; // vertical offset
   int8_t option; // optional parameter (currently in effect_shadow 1=draw long shadow)
   uint8_t *aplite_visited; // for Applite holds array of visited pixels
-} EffectOffset;  
+} EffectOffset;
 
 // structure for color swap effect
 typedef struct {
@@ -85,8 +85,8 @@ effect_cb effect_blur;
 
 // Zoom effect
 // Added by Ron64
-// Parameter: Y zoom (high byte) X zoom(low byte),  0x10 no zoom 0x20 200% 0x08 50%, 
-// use the percentage macro EL_ZOOM(150,60). In this example: Y- zomm in 150%, X- zoom out to 60% 
+// Parameter: Y zoom (high byte) X zoom(low byte),  0x10 no zoom 0x20 200% 0x08 50%,
+// use the percentage macro EL_ZOOM(150,60). In this example: Y- zomm in 150%, X- zoom out to 60%
 effect_cb effect_zoom;
 
 #define EL_ZOOM(x,y) ((void*)((((y)*16/100)|(((x)*16/100)<<8))))

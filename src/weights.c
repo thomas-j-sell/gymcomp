@@ -26,7 +26,7 @@ int current_exercise = 0;
 
 
 // @TODO set defaults to 0
-void set_default_weights()  
+void set_default_weights()
 {
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "seting default weights");
   weights.name = "Tom";
